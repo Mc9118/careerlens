@@ -255,22 +255,67 @@
             </div>
         </section>
 
-        <section class="section-block workspace-section" id="skills-workspace">
-            <div class="section-heading">
-                <div>
-                    <p class="eyebrow">YOUR NEXT SKILLS</p>
-                    <h2>Plan your skill development.</h2>
-                </div>
-            </div>
-            <div class="placeholder-panel">
-                <div class="tool-icon orange">◎</div>
-                <div>
-                    <strong>Skill gap workspace</strong>
-                    <p>We'll compare your skills with a target role and recommend learning resources.</p>
-                </div>
-            </div>
-        </section>
+    <section class="section-block workspace-section" id="skills-workspace">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">YOUR NEXT SKILLS</p>
+            <h2>Skill Gap Analysis</h2>
+            <p class="subtitle">
+                Discover which skills to improve for your target job.
+                First, analyze your resume above.
+            </p>
+        </div>
+    </div>
 
+    <div id="skill-gap-empty" class="placeholder-panel">
+        <div class="tool-icon orange">◎</div>
+        <div>
+            <strong>Your skill report will appear here</strong>
+            <p>Upload your resume and enter a job description in the
+               Resume ATS section to discover your skill gaps.</p>
+            <a href="#ats-workspace" class="tool-link">
+                Analyze resume ↗
+            </a>
+        </div>
+    </div>
+    <div id="skill-gap-results" hidden>
+    <div class="ats-keyword-grid">
+        <div>
+            <h3>Skills Found</h3>
+            <ul id="skill-gap-matched"></ul>
+        </div>
+        <div>
+            <h3>Skills to Develop</h3>
+            <ul id="skill-gap-missing"></ul>
+        </div>
+    </div>
+    <h3>Your Learning Priorities</h3>
+    <ul id="skill-gap-recommendations"></ul>
+</div>
+
+            <div class="placeholder-panel">
+                <div>
+                    <h3>Skills to Develop</h3>
+                    <ul id="skill-gap-missing"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="placeholder-panel">
+            <div>
+                <h3>Your Learning Priorities</h3>
+                <p>Focus on these areas to improve your preparation
+                   for the target role.</p>
+                <ul id="skill-gap-recommendations"></ul>
+            </div>
+        </div>
+
+        <p class="ats-note">
+            Results are based on keyword matching. A missing keyword
+            does not necessarily mean you lack that skill.
+        </p>
+    </div>
+</section>
         <footer class="page-footer">
             <a href="/" class="brand">Career<span>Lens</span><b>.</b></a>
             <p>Your next opportunity starts with a clearer view.</p>

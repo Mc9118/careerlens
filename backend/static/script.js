@@ -13,7 +13,7 @@ const statuses = [
     "Rejected"
 ];
 
-let applications = loadApplications();
+// ---------------- APPLICATION TRACKER ----------------
 
 function loadApplications() {
     try {
@@ -25,11 +25,15 @@ function loadApplications() {
     }
 }
 
+let applications = loadApplications();
+
 function saveApplications() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(applications));
 }
 
 function renderApplications() {
+    if (!applicationList || !applicationCount) return;
+
     applicationList.innerHTML = "";
     applicationCount.textContent = applications.length;
 
@@ -136,7 +140,7 @@ function openApplicationForm() {
 
     document.getElementById("close-modal").addEventListener("click", () => {
         overlay.remove();
-        addButton.focus();
+        addButton?.focus();
     });
 
     overlay.addEventListener("click", (event) => {
@@ -170,7 +174,7 @@ function openApplicationForm() {
         renderApplications();
         overlay.remove();
 
-        document.getElementById("applications").scrollIntoView({
+        document.getElementById("applications")?.scrollIntoView({
             behavior: "smooth"
         });
     });
@@ -178,6 +182,113 @@ function openApplicationForm() {
     titleInput.focus();
 }
 
-addButton.addEventListener("click", openApplicationForm);
-
+addButton?.addEventListener("click", openApplicationForm);
 renderApplications();
+
+// ---------------- ATS RESUME ANALYZER ----------------
+
+const atsForm = document.getElementById("ats-form");
+
+if (atsForm) {
+    atsForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const message = document.getElementById("ats-message");
+        const results = document.getElementById("ats-results");
+        const button = document.getElementById("analyze-button");
+
+        message.textContent = "Analyzing your resume...";
+        results.hidden = true;
+        button.disabled = true;
+
+        try {
+            const formData = new FormData(atsForm);
+
+            const response = await fetch("/api/analyze-resume", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Analysis failed.");
+            }
+
+            document.getElementById("ats-score").textContent = data.score;
+
+           function fillList(elementId, items) {
+    const list = document.getElementById(elementId);
+
+    if (!list) {
+        console.error(`CareerLens: HTML element not found: ${elementId}`);
+        return;
+    }
+
+    list.replaceChildren();
+
+    if (!Array.isArray(items) || items.length === 0) {
+        const item = document.createElement("li");
+        item.textContent = "None found";
+        list.appendChild(item);
+        return;
+    }
+
+    items.forEach((text) => {
+        const item = document.createElement("li");
+        item.textContent = text;
+        list.appendChild(item);
+    });
+}
+
+            fillList("matched-keywords", data.matched_keywords);
+            fillList("missing-keywords", data.missing_keywords);
+            fillList("ats-suggestions", data.suggestions);
+
+            // Update Skill Gap Analysis using the same ATS results.
+const skillGapEmpty = document.getElementById("skill-gap-empty");
+const skillGapResults = document.getElementById("skill-gap-results");
+const skillCount = document.getElementById("skill-count");
+
+fillList("skill-gap-matched", data.matched_keywords);
+fillList("skill-gap-missing", data.missing_keywords);
+
+// Show the missing keywords as learning priorities.
+const recommendations = data.missing_keywords.map(
+    skill => `Learn and practice ${skill}.`
+);
+
+fillList("skill-gap-recommendations", recommendations);
+
+if (skillGapEmpty) {
+    skillGapEmpty.hidden = true;
+}
+
+if (skillGapResults) {
+    skillGapResults.hidden = false;
+}
+
+if (skillCount) {
+    skillCount.textContent = data.missing_keywords.length;
+}
+
+            document.getElementById("ats-note").textContent = data.note;
+            results.hidden = false;
+            message.textContent = "Analysis complete!";
+
+            // Update the dashboard's ATS score card.
+            const atsStat = document.getElementById("ats-stat");
+            if (atsStat) {
+                atsStat.innerHTML = `${data.score}<small> / 100</small>`;
+            }
+        } catch (error) {
+            message.textContent =
+                error.message || "Something went wrong. Please try again.";
+        } finally {
+            button.disabled = false;
+        }
+    });
+}
+
+console.log("CareerLens JavaScript loaded");
+console.log("ATS form found:", Boolean(atsForm));
